@@ -5,7 +5,7 @@
 - 支持MD5,SHA1,SHA256,SHA512
 - 支持HMAC
 
-####哈希运算DEMO
+> 哈希运算DEMO
 
 ```Go
 package main
@@ -26,7 +26,7 @@ func main() {
 ## 加解密
 由于精力有限,目前只封装了AES_CBC_128,AES_CBC_192,AES_CBC_256
 
-####AES加解密DEMO
+> AES加解密DEMO
 ```Go
 package main
 import (
