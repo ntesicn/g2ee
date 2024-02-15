@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-    edObj := G2EE_EDOBJ.NewEDObj()
+    edObj := G2EE_EDOBJ.New()
     //需要注意 hash运算的输出类型目前只支持 OutType_HEX 和 OutType_BASE64
     md5Str := edObj.GetHash(edObj.HashType_MD5,"123456",edObj.OutType_HEX)
     fmt.Println(md5Str)
@@ -33,7 +33,7 @@ import (
     G2EE_EDOBJ "github.com/ntesicn/g2ee/edObj"
 )
 func main() {
-    edObj := G2EE_EDOBJ.NewEDObj()
+    edObj := G2EE_EDOBJ.New()
     
     // ecryptType string, input interface{}, secret interface{}, iv interface{}, paddingType string, outType string
     // 这个demo中"123456"为待加密内容  可以传入string 或者[]byte 不用考虑类型转换 直接传入即可
