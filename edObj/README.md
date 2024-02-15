@@ -1,7 +1,7 @@
 # G2EE-加解密对象
 - 更加便捷的进行hash运算处理和加解密处理
 
-## 支持的hash运算类型
+> 支持的hash运算类型
 - 支持MD5,SHA1,SHA256,SHA512
 - 支持HMAC
 
@@ -23,7 +23,7 @@ func main() {
 ```
 
 
-## 加解密
+> 加解密
 由于精力有限,目前只封装了AES_CBC_128,AES_CBC_192,AES_CBC_256
 
 > AES加解密DEMO
