@@ -10,7 +10,7 @@
 ```Go
 package main
 import (
-   G2EE_EDOBJ "github.com/zhengxiaoyao0716/g2ee/edObj"
+   G2EE_EDOBJ "github.com/ntesicn/g2ee/edObj"
 )
 
 func main() {
@@ -30,7 +30,7 @@ func main() {
 ```Go
 package main
 import (
-    G2EE_EDOBJ "github.com/zhengxiaoyao0716/g2ee/edObj"
+    G2EE_EDOBJ "github.com/ntesicn/g2ee/edObj"
 )
 func main() {
     edObj := G2EE_EDOBJ.NewEDObj()
