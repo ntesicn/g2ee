@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type g2eeLogger struct {
+type G2EELogger struct {
 	normalLogger *log.Logger
 	errorLogger  *log.Logger
 	debugLogger  *log.Logger
@@ -23,8 +23,8 @@ type g2eeLogger struct {
 	mutex sync.Mutex
 }
 
-func New() *g2eeLogger {
-	logger := &g2eeLogger{
+func New() *G2EELogger {
+	logger := &G2EELogger{
 		LogType_Normal: "normal",
 		LogType_Error:  "error",
 		LogType_Debug:  "debug",
@@ -33,7 +33,7 @@ func New() *g2eeLogger {
 	return logger
 }
 
-func (l *g2eeLogger) Log(logType string, msg string) {
+func (l *G2EELogger) Log(logType string, msg string) {
 	if logType == "" {
 		return
 	}
@@ -49,7 +49,7 @@ func (l *g2eeLogger) Log(logType string, msg string) {
 }
 
 // rotateLogFiles 用于旋转日志文件并更新关联的记录器。
-func (l *g2eeLogger) rotateLogFiles() {
+func (l *G2EELogger) rotateLogFiles() {
 	// 加锁以确保在旋转日志文件期间操作的原子性
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
@@ -94,27 +94,27 @@ func (l *g2eeLogger) rotateLogFiles() {
 	l.debugLogger = log.New(l.debugLogFile, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
-func (l *g2eeLogger) getLogFileName(logType string, t time.Time) string {
+func (l *G2EELogger) getLogFileName(logType string, t time.Time) string {
 	return logType + "-" + t.Format("2006-01-02") + ".log"
 }
 
-func (l *g2eeLogger) Normal(msg string) {
+func (l *G2EELogger) Normal(msg string) {
 	l.rotateIfNecessary()
 	l.normalLogger.Println(msg)
 }
 
-func (l *g2eeLogger) Error(msg string) {
+func (l *G2EELogger) Error(msg string) {
 	l.rotateIfNecessary()
 	l.errorLogger.Println(msg)
 }
 
-func (l *g2eeLogger) Debug(msg string) {
+func (l *G2EELogger) Debug(msg string) {
 	l.rotateIfNecessary()
 	l.debugLogger.Println(msg)
 }
 
 // rotateIfNecessary 是一个检查当前日志文件是否需要基于当前时间及文件修改时间进行轮转的方法。
-func (l *g2eeLogger) rotateIfNecessary() {
+func (l *G2EELogger) rotateIfNecessary() {
 	// 获取当前时间
 	t := time.Now()
 
