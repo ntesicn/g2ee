@@ -40,11 +40,11 @@ func (l *G2EELogger) Log(logType string, msg string) {
 
 	switch logType {
 	case l.LogType_Normal:
-		l.Debug(msg)
+		l.Normal(msg)
 	case l.LogType_Error:
 		l.Error(msg)
 	case l.LogType_Debug:
-		l.Normal(msg)
+		l.Debug(msg)
 	}
 }
 
