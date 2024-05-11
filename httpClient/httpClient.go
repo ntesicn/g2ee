@@ -17,7 +17,7 @@ type g2eeHttpClient struct {
 func New() *g2eeHttpClient {
 	return &g2eeHttpClient{
 		client: &http.Client{
-			Timeout: time.Duration(15) * time.Second,
+			Timeout: time.Duration(20) * time.Second,
 		},
 	}
 }
