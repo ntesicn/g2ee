@@ -14,10 +14,10 @@ type g2eeHttpClient struct {
 	client *http.Client
 }
 
-func New() *g2eeHttpClient {
+func New(tout int) *g2eeHttpClient {
 	return &g2eeHttpClient{
 		client: &http.Client{
-			Timeout: time.Duration(20) * time.Second,
+			Timeout: time.Duration(tout) * time.Second,
 		},
 	}
 }
