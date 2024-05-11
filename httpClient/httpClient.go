@@ -23,7 +23,7 @@ func New() *g2eeHttpClient {
 }
 func (c *g2eeHttpClient) ChangeTimeout(timeout int) {
 	// 通过指针修改 client.Timeout 的值
-	c.client.Timeout = time.Duration(15) * time.Second
+	c.client.Timeout = time.Duration(timeout) * time.Second
 }
 
 func (c *g2eeHttpClient) POST(url string, body interface{}, headers map[string]string) (interface{}, error) {
