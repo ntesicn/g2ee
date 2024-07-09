@@ -1,6 +1,7 @@
 package snowflake
 
 import (
+	"fmt"
 	"sync"
 	"time"
 )
@@ -51,4 +52,10 @@ func (s *Snowflake) Generate() int64 {
 	id := ((now - epoch) << (nodeBits + sequenceBits)) | (s.nodeID << sequenceBits) | s.sequence
 	return id
 
+}
+
+// GenerateString 方法用于生成基于当前 Snowflake ID 的字符串表示
+func (s *Snowflake) GenerateString() string {
+	id := s.Generate()           // 调用 Generate 方法获取 Snowflake ID
+	return fmt.Sprintf("%d", id) // 将 ID 转换为字符串并返回
 }

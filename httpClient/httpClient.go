@@ -3,6 +3,7 @@ package httpClient // 网站客户端
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -11,7 +12,8 @@ import (
 )
 
 type g2eeHttpClient struct {
-	client *http.Client
+	client  *http.Client
+	resData []byte
 }
 
 func New() *g2eeHttpClient {
@@ -26,7 +28,15 @@ func (c *g2eeHttpClient) ChangeTimeout(timeout int) {
 	c.client.Timeout = time.Duration(timeout) * time.Second
 }
 
-func (c *g2eeHttpClient) POST(url string, body interface{}, headers map[string]string) (interface{}, error) {
+func (c *g2eeHttpClient) GetResBin() []byte {
+	return c.resData
+}
+
+func (c *g2eeHttpClient) GetResString() string {
+	return string(c.resData)
+}
+
+func (c *g2eeHttpClient) POST(url string, body interface{}, headers map[string]string) error {
 	var req *http.Request
 	//断言body类型
 	switch body.(type) {
@@ -48,7 +58,7 @@ func (c *g2eeHttpClient) POST(url string, body interface{}, headers map[string]s
 		req.Header.Set("Content-Type", "application/json")
 
 	default:
-		return nil, fmt.Errorf("body type error")
+		return errors.New("body type error")
 	}
 	//设置header
 	if headers != nil {
@@ -59,22 +69,23 @@ func (c *g2eeHttpClient) POST(url string, body interface{}, headers map[string]s
 
 	resp, err := c.client.Do(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode == 200 {
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		return body, nil
+		c.resData = body
+		return nil
 	} else {
-		return nil, fmt.Errorf("http status code is %d", resp.StatusCode)
+		return errors.New("http status code is " + fmt.Sprintf("%d", resp.StatusCode))
 	}
 
 }
 
-func (c *g2eeHttpClient) GET(url string, query interface{}, headers map[string]string) (interface{}, error) {
+func (c *g2eeHttpClient) GET(url string, query interface{}, headers map[string]string) error {
 	if query != nil {
 		//断言query类型
 		switch query.(type) {
@@ -91,13 +102,13 @@ func (c *g2eeHttpClient) GET(url string, query interface{}, headers map[string]s
 			url = strings.TrimRight(url, "&")
 
 		default:
-			return nil, fmt.Errorf("query type error")
+			return errors.New("query type error")
 		}
 	}
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if headers != nil {
 		for k, v := range headers {
@@ -106,18 +117,19 @@ func (c *g2eeHttpClient) GET(url string, query interface{}, headers map[string]s
 	}
 	resp, err := c.client.Do(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode == 200 {
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return nil, err
+			return err
 		} else {
-			return body, nil
+			c.resData = body
+			return nil
 		}
 	} else {
-		return nil, fmt.Errorf("http status code is %d", resp.StatusCode)
+		return errors.New("http status code is " + fmt.Sprintf("%d", resp.StatusCode))
 	}
 }
 

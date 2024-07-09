@@ -6,6 +6,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -112,10 +114,32 @@ func HmacSha1(key []byte, data []byte) []byte {
 	return h.Sum(nil)
 }
 
-func (qn *Qiniu) CreateDownLoad(url string, effectiveTime int64) string {
-	expire := time.Now().Add(time.Duration(effectiveTime) * time.Second).Unix()
+func (qn *Qiniu) CreateDownLoad(link string, effectiveTime int64) string {
+	// 解析URL以检查是否已存在有效期参数
+	parsedUrl, err := url.Parse(link)
+	if err != nil {
+		fmt.Println("URL parsing error:", err)
+		return ""
+	}
+	queryParams := parsedUrl.Query()
+	expireStr := queryParams.Get("e")
 
-	urlStr := url + "?e=" + fmt.Sprintf("%d", expire)
+	if expireStr != "" {
+		// 如果存在有效期参数，尝试解析并判断是否即将过期
+		expire, err := strconv.ParseInt(expireStr, 10, 64)
+		if err != nil {
+			fmt.Println("Error parsing expire time:", err)
+			return ""
+		}
+		if time.Now().Unix() < expire-60 {
+			// 如果有效期还未到一分钟前，直接返回原URL
+			return link
+		}
+	}
+
+	// 如果没有有效期参数或有效期即将过期，重新计算有效期
+	expire := time.Now().Add(time.Duration(effectiveTime) * time.Second).Unix()
+	urlStr := parsedUrl.Scheme + "://" + parsedUrl.Host + parsedUrl.Path + "?e=" + fmt.Sprintf("%d", expire)
 	encodedSign := base64.URLEncoding.EncodeToString(HmacSha1([]byte(qn.SecretKey), []byte(urlStr)))
 	Token := qn.AccessKey + ":" + encodedSign
 	urlStr = urlStr + "&token=" + Token

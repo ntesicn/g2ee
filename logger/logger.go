@@ -3,6 +3,7 @@ package logger
 import (
 	"log"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
 )
@@ -20,14 +21,17 @@ type G2EELogger struct {
 	LogType_Error  string
 	LogType_Debug  string
 
+	logPath string
+
 	mutex sync.Mutex
 }
 
-func New() *G2EELogger {
+func New(logPath string) *G2EELogger {
 	logger := &G2EELogger{
 		LogType_Normal: "normal",
 		LogType_Error:  "error",
 		LogType_Debug:  "debug",
+		logPath:        logPath,
 	}
 	logger.rotateLogFiles()
 	return logger
@@ -95,7 +99,7 @@ func (l *G2EELogger) rotateLogFiles() {
 }
 
 func (l *G2EELogger) getLogFileName(logType string, t time.Time) string {
-	return logType + "-" + t.Format("2006-01-02") + ".log"
+	return filepath.Join(l.logPath, logType, t.Format("2006-01-02")+".log")
 }
 
 func (l *G2EELogger) Normal(msg string) {
