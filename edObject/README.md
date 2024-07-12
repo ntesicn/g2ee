@@ -43,7 +43,7 @@ func main() {
     // iv可以直接传入nil 也可以传入指定的偏移量 可以传入string 或者[]byte 不用考虑类型转换 直接传入即可
     // paddingType 为填充类型 edObject.PADDING_NONE edObject.PADDING_PKCS5 edObject.PADDING_PKCS7 edObject.PADDING_ZERO 
     // outType 为输出类型 edObject.OUTTYPE_HEX edObject.OUTTYPE_TEXT edObject.OUTTYPE_BINARY edObject.OUTTYPE_BASE64
-    aesResult,err := edObj.Encrypt(edObject.AES_CBC_128,"123456","1234567890123456",nil,edObject.PADDING_PKCS5,edObj.OUTTYPE_HEX)
+    aesResult,err := edObj.Encrypt(edObject.AES_CBC_128,"123456","1234567890123456",nil,edObject.PADDING_PKCS5,edObject.OUTTYPE_HEX)
     //aesResult需要根据OutType进行断言
 
       // 或者
