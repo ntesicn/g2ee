@@ -15,81 +15,48 @@ import (
 	"hash"
 )
 
-type g2eeEDObject struct {
-	HashType_MD5    string
-	HashType_SHA1   string
-	HashType_SHA256 string
-	HashType_SHA512 string
-
-	OutType_Hex    string
-	OutType_Base64 string
-	OutType_Binary string
-	OutType_Text   string
-
-	AES_CBC_128 string
-	AES_CBC_192 string
-	AES_CBC_256 string
-
-	AES_ECB_128 string
-	AES_ECB_192 string
-	AES_ECB_256 string
-
-	AES_CFB_128 string
-	AES_CFB_192 string
-	AES_CFB_256 string
-
-	AES_OFB_128 string
-	AES_OFB_192 string
-	AES_OFB_256 string
-
-	AES_CTR_128 string
-	AES_CTR_192 string
-	AES_CTR_256 string
-
-	PaddingType_PKCS5 string
-	PaddingType_PKCS7 string
-	PaddingType_Zero  string
-	PaddingType_None  string
-}
+type g2eeEDObject struct{}
 
 func New() *g2eeEDObject {
-	return &g2eeEDObject{
-		HashType_MD5:    "md5",
-		HashType_SHA1:   "sha1",
-		HashType_SHA256: "sha256",
-		HashType_SHA512: "sha512",
-
-		OutType_Hex:    "hex",
-		OutType_Base64: "base64",
-		OutType_Binary: "binary",
-		OutType_Text:   "text",
-
-		AES_CBC_128: "AES_CBC_128",
-		AES_CBC_192: "AES_CBC_192",
-		AES_CBC_256: "AES_CBC_256",
-
-		AES_ECB_128: "AES_ECB_128",
-		AES_ECB_192: "AES_ECB_192",
-		AES_ECB_256: "AES_ECB_256",
-
-		AES_CFB_128: "AES_CFB_128",
-		AES_CFB_192: "AES_CFB_192",
-		AES_CFB_256: "AES_CFB_256",
-
-		AES_OFB_128: "AES_OFB_128",
-		AES_OFB_192: "AES_OFB_192",
-		AES_OFB_256: "AES_OFB_256",
-
-		AES_CTR_128: "AES_CTR_128",
-		AES_CTR_192: "AES_CTR_192",
-		AES_CTR_256: "AES_CTR_256",
-
-		PaddingType_PKCS5: "pkcs5",
-		PaddingType_PKCS7: "pkcs7",
-		PaddingType_Zero:  "zero",
-		PaddingType_None:  "none",
-	}
+	return &g2eeEDObject{}
 }
+
+const (
+	HASHTYPE_MD5    = "MD5"
+	HASHTYPE_SHA1   = "SHA1"
+	HASHTYPE_SHA256 = "SHA256"
+	HASHTYPE_SHA512 = "SHA512"
+
+	OUTTYPE_HEX    = "HEX"
+	OUTTYPE_BASE64 = "BASE64"
+	OUTTYPE_BINARY = "BINARY"
+	OUTTYPE_TEXT   = "TEXT"
+
+	AES_CBC_128 = "AES_CBC_128"
+	AES_CBC_192 = "AES_CBC_192"
+	AES_CBC_256 = "AES_CBC_256"
+
+	AES_ECB_128 = "AES_ECB_128"
+	AES_ECB_192 = "AES_ECB_192"
+	AES_ECB_256 = "AES_ECB_256"
+
+	AES_CFB_128 = "AES_CFB_128"
+	AES_CFB_192 = "AES_CFB_192"
+	AES_CFB_256 = "AES_CFB_256"
+
+	AES_OFB_128 = "AES_OFB_128"
+	AES_OFB_192 = "AES_OFB_192"
+	AES_OFB_256 = "AES_OFB_256"
+
+	AES_CTR_128 = "AES_CTR_128"
+	AES_CTR_192 = "AES_CTR_192"
+	AES_CTR_256 = "AES_CTR_256"
+
+	PADDING_PKCS5 = "pkcs5"
+	PADDING_PKCS7 = "pkcs7"
+	PADDING_ZERO  = "zero"
+	PADDING_NONE  = "none"
+)
 
 /* 加解密对象 加密数据 公开 */
 /* ecryptType 加密类型 AES_CBC_128/192/256 */
@@ -100,7 +67,7 @@ func New() *g2eeEDObject {
 /* outType 为输出类型 OutType_Hex OutType_Text OutType_Binary OutType_Base64 */
 func (edobj *g2eeEDObject) Encrypt(ecryptType string, input interface{}, secret interface{}, iv interface{}, paddingType string, outType string) (interface{}, error) {
 	switch ecryptType {
-	case edobj.AES_CBC_128, edobj.AES_CBC_192, edobj.AES_CBC_256:
+	case AES_CBC_128, AES_CBC_192, AES_CBC_256:
 
 		return edobj.aesCBCEncrypt(ecryptType, input, secret, iv, paddingType, outType)
 
@@ -113,10 +80,10 @@ func (edobj *g2eeEDObject) Encrypt(ecryptType string, input interface{}, secret 
 /* AES_CBC 加密  内部 */
 func (edobj *g2eeEDObject) aesCBCEncrypt(ecryptType string, input interface{}, secret interface{}, iv interface{}, paddingType string, outType string) (interface{}, error) {
 	if paddingType == "" {
-		paddingType = edobj.PaddingType_None
+		paddingType = PADDING_NONE
 	}
 	if outType == "" {
-		outType = edobj.OutType_Hex
+		outType = OUTTYPE_HEX
 	}
 	// 断言 secret
 	var secretBin []byte
@@ -130,11 +97,11 @@ func (edobj *g2eeEDObject) aesCBCEncrypt(ecryptType string, input interface{}, s
 	}
 	//根据ecryptType使用ZeroPadding补全密码长度
 	switch ecryptType {
-	case edobj.AES_CBC_128:
+	case AES_CBC_128:
 		secretBin = ZeroPadding(secretBin, 16)
-	case edobj.AES_CBC_192:
+	case AES_CBC_192:
 		secretBin = ZeroPadding(secretBin, 24)
-	case edobj.AES_CBC_256:
+	case AES_CBC_256:
 		secretBin = ZeroPadding(secretBin, 32)
 	}
 
@@ -174,16 +141,16 @@ func (edobj *g2eeEDObject) aesCBCEncrypt(ecryptType string, input interface{}, s
 
 	var ciphertext []byte
 	switch paddingType {
-	case edobj.PaddingType_PKCS5:
+	case PADDING_PKCS5:
 		ciphertext = PKCS5Padding(inputBin, block.BlockSize())
 
-	case edobj.PaddingType_PKCS7:
+	case PADDING_PKCS7:
 		ciphertext = PKCS7Padding(inputBin, block.BlockSize())
 
-	case edobj.PaddingType_Zero:
+	case PADDING_ZERO:
 		ciphertext = ZeroPadding(inputBin, block.BlockSize())
 
-	case edobj.PaddingType_None:
+	case PADDING_NONE:
 		ciphertext = inputBin
 
 	default:
@@ -193,11 +160,11 @@ func (edobj *g2eeEDObject) aesCBCEncrypt(ecryptType string, input interface{}, s
 	CBC := cipher.NewCBCEncrypter(block, ivBin)
 	CBC.CryptBlocks(ciphertext, ciphertext)
 	switch outType {
-	case edobj.OutType_Hex:
+	case OUTTYPE_HEX:
 		return hex.EncodeToString(ciphertext), nil
-	case edobj.OutType_Base64:
+	case OUTTYPE_BASE64:
 		return base64.StdEncoding.EncodeToString(ciphertext), nil
-	case edobj.OutType_Binary:
+	case OUTTYPE_BINARY:
 		return ciphertext, nil
 	default:
 		return "", fmt.Errorf("未知OutType")
@@ -208,7 +175,7 @@ func (edobj *g2eeEDObject) aesCBCEncrypt(ecryptType string, input interface{}, s
 /* 加解密对象 解密数据 公开 */
 func (edobj *g2eeEDObject) Decrypt(ecryptType string, input interface{}, secret interface{}, iv interface{}, paddingType string, outType string) (interface{}, error) {
 	switch ecryptType {
-	case edobj.AES_CBC_128, edobj.AES_CBC_192, edobj.AES_CBC_256:
+	case AES_CBC_128, AES_CBC_192, AES_CBC_256:
 
 		return edobj.aesCBCDecrypt(ecryptType, input, secret, iv, paddingType, outType)
 
@@ -221,10 +188,10 @@ func (edobj *g2eeEDObject) Decrypt(ecryptType string, input interface{}, secret 
 /* AES_CBC 解密  内部 */
 func (edobj *g2eeEDObject) aesCBCDecrypt(ecryptType string, input interface{}, secret interface{}, iv interface{}, paddingType string, outType string) (interface{}, error) {
 	if paddingType == "" {
-		paddingType = edobj.PaddingType_None
+		paddingType = PADDING_NONE
 	}
 	if outType == "" {
-		outType = edobj.OutType_Binary
+		outType = OUTTYPE_BINARY
 	}
 	// 断言 secret
 	var secretBin []byte
@@ -239,11 +206,11 @@ func (edobj *g2eeEDObject) aesCBCDecrypt(ecryptType string, input interface{}, s
 
 	//根据ecryptType使用ZeroPadding补全密码长度
 	switch ecryptType {
-	case edobj.AES_CBC_128:
+	case AES_CBC_128:
 		secretBin = ZeroPadding(secretBin, 16)
-	case edobj.AES_CBC_192:
+	case AES_CBC_192:
 		secretBin = ZeroPadding(secretBin, 24)
-	case edobj.AES_CBC_256:
+	case AES_CBC_256:
 		secretBin = ZeroPadding(secretBin, 32)
 	}
 
@@ -284,26 +251,26 @@ func (edobj *g2eeEDObject) aesCBCDecrypt(ecryptType string, input interface{}, s
 	mode.CryptBlocks(inputBin, inputBin)
 
 	switch paddingType {
-	case edobj.PaddingType_PKCS5:
+	case PADDING_PKCS5:
 		inputBin = PKCS5UnPadding(inputBin)
-	case edobj.PaddingType_PKCS7:
+	case PADDING_PKCS7:
 		inputBin = PKCS7UnPadding(inputBin)
-	case edobj.PaddingType_Zero:
+	case PADDING_ZERO:
 		inputBin = ZeroUnPadding(inputBin)
-	case edobj.PaddingType_None:
+	case PADDING_NONE:
 		break
 	default:
 		return nil, fmt.Errorf("未知填充类型")
 	}
 
 	switch outType {
-	case edobj.OutType_Hex:
+	case OUTTYPE_HEX:
 		return hex.EncodeToString(inputBin), nil
-	case edobj.OutType_Base64:
+	case OUTTYPE_BASE64:
 		return base64.StdEncoding.EncodeToString(inputBin), nil
-	case edobj.OutType_Binary:
+	case OUTTYPE_BINARY:
 		return inputBin, nil
-	case edobj.OutType_Text:
+	case OUTTYPE_TEXT:
 		return string(inputBin), nil
 	default:
 		return nil, fmt.Errorf("未知OutType")
@@ -358,13 +325,13 @@ func (edobj *g2eeEDObject) GetHash(hashType string, input interface{}, outType s
 	var hash hash.Hash
 	//判断hash类型 md5 sha1 sha128 sha256 sha512
 	switch hashType {
-	case edobj.HashType_MD5:
+	case HASHTYPE_MD5:
 		hash = md5.New()
-	case edobj.HashType_SHA1:
+	case HASHTYPE_SHA1:
 		hash = sha1.New()
-	case edobj.HashType_SHA256:
+	case HASHTYPE_SHA256:
 		hash = sha256.New()
-	case edobj.HashType_SHA512:
+	case HASHTYPE_SHA512:
 		hash = sha512.New()
 	default:
 		return ""
@@ -380,9 +347,9 @@ func (edobj *g2eeEDObject) GetHash(hashType string, input interface{}, outType s
 	}
 	hashValue := hash.Sum(nil)
 
-	if outType == edobj.OutType_Hex {
+	if outType == OUTTYPE_HEX {
 		return hex.EncodeToString(hashValue)
-	} else if outType == edobj.OutType_Base64 {
+	} else if outType == OUTTYPE_BASE64 {
 		return base64.StdEncoding.EncodeToString(hashValue)
 	}
 	return ""
@@ -404,13 +371,13 @@ func (dbobj *g2eeEDObject) GetHMAC(hashType string, input interface{}, key inter
 	var hash hash.Hash
 	//判断hash类型 md5 sha1 sha128 sha256 sha512
 	switch hashType {
-	case dbobj.HashType_MD5:
+	case HASHTYPE_MD5:
 		hash = hmac.New(md5.New, keybin)
-	case dbobj.HashType_SHA1:
+	case HASHTYPE_SHA1:
 		hash = hmac.New(sha1.New, keybin)
-	case dbobj.HashType_SHA256:
+	case HASHTYPE_SHA256:
 		hash = hmac.New(sha256.New, keybin)
-	case dbobj.HashType_SHA512:
+	case HASHTYPE_SHA512:
 		hash = hmac.New(sha512.New, keybin)
 	default:
 		return ""
@@ -428,9 +395,9 @@ func (dbobj *g2eeEDObject) GetHMAC(hashType string, input interface{}, key inter
 
 	hashValue := hash.Sum(nil)
 
-	if outType == dbobj.OutType_Hex {
+	if outType == OUTTYPE_HEX {
 		return hex.EncodeToString(hashValue)
-	} else if outType == dbobj.OutType_Base64 {
+	} else if outType == OUTTYPE_BASE64 {
 		return base64.StdEncoding.EncodeToString(hashValue)
 	}
 	return ""
