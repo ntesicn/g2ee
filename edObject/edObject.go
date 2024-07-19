@@ -202,11 +202,7 @@ func (edobj *g2eeEDObject) aesCBCDecrypt(ecryptType string, input interface{}, s
 	var secretBin []byte
 	switch secret := secret.(type) {
 	case string:
-		decodedSecret, err := base64.StdEncoding.DecodeString(secret)
-		if err != nil {
-			return nil, fmt.Errorf("base64解码失败: %v", err)
-		}
-		secretBin = decodedSecret
+		secretBin = []byte(secret)
 	case []byte:
 		secretBin = secret
 	default:
@@ -227,7 +223,11 @@ func (edobj *g2eeEDObject) aesCBCDecrypt(ecryptType string, input interface{}, s
 	var inputBin []byte
 	switch input := input.(type) {
 	case string:
-		inputBin = []byte(input)
+		decodedInput, err := base64.StdEncoding.DecodeString(input)
+		if err != nil {
+			return nil, fmt.Errorf("base64解码失败: %v", err)
+		}
+		inputBin = decodedInput
 	case []byte:
 		inputBin = input
 	default:
@@ -428,4 +428,3 @@ func (dbobj *g2eeEDObject) GetHMAC(hashType string, input interface{}, key inter
 	}
 	return ""
 }
-
