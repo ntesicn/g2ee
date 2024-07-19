@@ -135,8 +135,13 @@ func (edobj *g2eeEDObject) aesCBCEncrypt(ecryptType string, input interface{}, s
 		default:
 			return "", fmt.Errorf("IV只能为string或[]byte")
 		}
-		//补全IV长度
-		ivBin = ZeroPadding(ivBin, aes.BlockSize)
+		// 补全或截断IV长度
+		if len(ivBin) < aes.BlockSize {
+			ivBin = ZeroPadding(ivBin, aes.BlockSize)
+		} else if len(ivBin) > aes.BlockSize {
+			ivBin = ivBin[:aes.BlockSize]
+		}
+
 	}
 
 	var ciphertext []byte
@@ -248,10 +253,25 @@ func (edobj *g2eeEDObject) aesCBCDecrypt(ecryptType string, input interface{}, s
 		default:
 			return nil, fmt.Errorf("IV只能为string或[]byte或nil")
 		}
-		ivBin = ZeroPadding(ivBin, aes.BlockSize)
+		if len(ivBin) < aes.BlockSize {
+			ivBin = ZeroPadding(ivBin, aes.BlockSize)
+		} else if len(ivBin) > aes.BlockSize {
+			ivBin = ivBin[:aes.BlockSize]
+		}
 	}
 
 	mode := cipher.NewCBCDecrypter(block, ivBin)
+	// 填充
+	switch paddingType {
+	case PADDING_PKCS5:
+		inputBin = PKCS5Padding(inputBin, block.BlockSize())
+	case PADDING_PKCS7:
+		inputBin = ZeroPadding(inputBin, block.BlockSize())
+	case PADDING_ZERO:
+		break
+	default:
+		return nil, fmt.Errorf("未知填充类型")
+	}
 	mode.CryptBlocks(inputBin, inputBin)
 
 	switch paddingType {
