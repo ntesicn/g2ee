@@ -197,7 +197,11 @@ func (edobj *g2eeEDObject) aesCBCDecrypt(ecryptType string, input interface{}, s
 	var secretBin []byte
 	switch secret := secret.(type) {
 	case string:
-		secretBin = []byte(secret)
+		decodedSecret, err := base64.StdEncoding.DecodeString(secret)
+		if err != nil {
+			return nil, fmt.Errorf("base64解码失败: %v", err)
+		}
+		secretBin = decodedSecret
 	case []byte:
 		secretBin = secret
 	default:
