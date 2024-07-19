@@ -10,14 +10,16 @@
 ```Go
 package main
 import (
-   G2EE_EDOBJ "github.com/ntesicn/g2ee/edObj"
+   "github.com/ntesicn/g2ee/edObject"
 )
 
 func main() {
-    edObj := G2EE_EDOBJ.New()
+    edObj := edObject.New()
     //需要注意 hash运算的输出类型目前只支持 OutType_HEX 和 OutType_BASE64
-    md5Str := edObj.GetHash(edObj.HashType_MD5,"123456",edObj.OutType_HEX)
+    md5Str := edObj.GetHash(edObject.HASHTYPE_MD5,"123456",edObject.OUTTYPE_HEX)
     fmt.Println(md5Str)
+      //或者
+    edObject.New().GetHash(edObject.HASHTYPE_MD5,"123456",edObject.OUTTYPE_HEX)
 }
 
 ```
@@ -30,19 +32,22 @@ func main() {
 ```Go
 package main
 import (
-    G2EE_EDOBJ "github.com/ntesicn/g2ee/edObj"
+   "github.com/ntesicn/g2ee/edObject"
 )
 func main() {
-    edObj := G2EE_EDOBJ.New()
+    edObj := edObject.New()
     
     // ecryptType string, input interface{}, secret interface{}, iv interface{}, paddingType string, outType string
     // 这个demo中"123456"为待加密内容  可以传入string 或者[]byte 不用考虑类型转换 直接传入即可
     // demo中"1234567890123456" 为密钥key 可以传入string 或者[]byte 不用考虑类型转换 直接传入即可
     // iv可以直接传入nil 也可以传入指定的偏移量 可以传入string 或者[]byte 不用考虑类型转换 直接传入即可
-    // paddingType 为填充类型 edObj.PaddingType_None edObj.PaddingType_PKCS5 edObj.PaddingType_PKCS7 edObj.PaddingType_Zero 
-    // outType 为输出类型 edObj.OutType_Hex edObj.OutType_Text edObj.OutType_Binary edObj.OutType_Base64
-    aesResult,err := edObj.Encrypt(edObj.AES_CBC_128,"123456","1234567890123456",nil,edObj.PaddingType_PKCS5,edObj.OutType_HEX)
+    // paddingType 为填充类型 edObject.PADDING_NONE edObject.PADDING_PKCS5 edObject.PADDING_PKCS7 edObject.PADDING_ZERO 
+    // outType 为输出类型 edObject.OUTTYPE_HEX edObject.OUTTYPE_TEXT edObject.OUTTYPE_BINARY edObject.OUTTYPE_BASE64
+    aesResult,err := edObj.Encrypt(edObject.AES_CBC_128,"123456","1234567890123456",nil,edObject.PADDING_PKCS5,edObject.OUTTYPE_HEX)
     //aesResult需要根据OutType进行断言
+
+    // 或者
+    aesResult,err := edObject.New().Encrypt(edObject.AES_CBC_128,"123456","1234567890123456",nil,edObject.PADDING_PKCS5,edObj.OUTTYPE_HEX)
 }
 
 ```
