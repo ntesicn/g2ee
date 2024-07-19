@@ -19,7 +19,11 @@ func main() {
     md5Str := edObj.GetHash(edObject.HASHTYPE_MD5,"123456",edObject.OUTTYPE_HEX)
     fmt.Println(md5Str)
       //或者
+<<<<<<< HEAD
     edObject.New().GetHash(edObject.HASHTYPE_MD5,"123456",edObject.OUTTYPE_HEX)
+=======
+      edObject.New().GetHash(edObject.HASHTYPE_MD5,"123456",edObject.OUTTYPE_HEX)
+>>>>>>> 493494113e34d6594745b45d5b801d6417a0310b
 }
 
 ```
@@ -46,8 +50,13 @@ func main() {
     aesResult,err := edObj.Encrypt(edObject.AES_CBC_128,"123456","1234567890123456",nil,edObject.PADDING_PKCS5,edObject.OUTTYPE_HEX)
     //aesResult需要根据OutType进行断言
 
+<<<<<<< HEAD
     // 或者
     aesResult,err := edObject.New().Encrypt(edObject.AES_CBC_128,"123456","1234567890123456",nil,edObject.PADDING_PKCS5,edObj.OUTTYPE_HEX)
+=======
+      // 或者
+     aesResult,err := edObject.New().Encrypt(edObject.AES_CBC_128,"123456","1234567890123456",nil,edObject.PADDING_PKCS5,edObj.OUTTYPE_HEX)
+>>>>>>> 493494113e34d6594745b45d5b801d6417a0310b
 }
 
 ```

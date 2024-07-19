@@ -254,7 +254,10 @@ func (edobj *g2eeEDObject) aesCBCDecrypt(ecryptType string, input interface{}, s
 	case PADDING_PKCS5:
 		inputBin = PKCS5UnPadding(inputBin)
 	case PADDING_PKCS7:
-		inputBin = PKCS7UnPadding(inputBin)
+		inputBin, err = PKCS7UnPadding(inputBin)
+		if err != nil {
+			return nil, err
+		}
 	case PADDING_ZERO:
 		inputBin = ZeroUnPadding(inputBin)
 	case PADDING_NONE:
@@ -300,6 +303,7 @@ func ZeroPadding(ciphertext []byte, targetSize int) []byte {
 }
 
 func ZeroUnPadding(origData []byte) []byte {
+
 	return bytes.TrimFunc(origData, func(r rune) bool {
 		return r == rune(0)
 	})
