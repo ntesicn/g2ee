@@ -261,23 +261,7 @@ func (edobj *g2eeEDObject) aesCBCDecrypt(ecryptType string, input interface{}, s
 	}
 
 	mode := cipher.NewCBCDecrypter(block, ivBin)
-	// 填充
-	switch paddingType {
-	case PADDING_PKCS5:
-		inputBin = PKCS5Padding(inputBin, block.BlockSize())
-	case PADDING_PKCS7:
-		inputBin = ZeroPadding(inputBin, block.BlockSize())
-	case PADDING_ZERO:
-		break
-	case PADDING_NONE:
-		// 判断是否块大小
-		if len(inputBin)%block.BlockSize() != 0 {
-			return nil, fmt.Errorf("待解密内容长度不是块大小的整数倍")
-		}
-		break
-	default:
-		return nil, fmt.Errorf("未知填充类型")
-	}
+
 	mode.CryptBlocks(inputBin, inputBin)
 
 	switch paddingType {
@@ -444,3 +428,4 @@ func (dbobj *g2eeEDObject) GetHMAC(hashType string, input interface{}, key inter
 	}
 	return ""
 }
+
