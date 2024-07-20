@@ -269,6 +269,12 @@ func (edobj *g2eeEDObject) aesCBCDecrypt(ecryptType string, input interface{}, s
 		inputBin = ZeroPadding(inputBin, block.BlockSize())
 	case PADDING_ZERO:
 		break
+	case PADDING_NONE:
+		// 判断是否块大小
+		if len(inputBin)%block.BlockSize() != 0 {
+			return nil, fmt.Errorf("待解密内容长度不是块大小的整数倍")
+		}
+		break
 	default:
 		return nil, fmt.Errorf("未知填充类型")
 	}
