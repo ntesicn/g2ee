@@ -261,29 +261,15 @@ func (edobj *g2eeEDObject) aesCBCDecrypt(ecryptType string, input interface{}, s
 	}
 
 	mode := cipher.NewCBCDecrypter(block, ivBin)
-	// 填充
-	switch paddingType {
-	case PADDING_PKCS5:
-		inputBin = PKCS5Padding(inputBin, block.BlockSize())
-	case PADDING_PKCS7:
-		inputBin = ZeroPadding(inputBin, block.BlockSize())
-	case PADDING_ZERO:
-		break
-	case PADDING_NONE:
-		// 判断是否块大小
-		if len(inputBin)%block.BlockSize() != 0 {
-			return nil, fmt.Errorf("待解密内容长度不是块大小的整数倍")
-		}
-		break
-	default:
-		return nil, fmt.Errorf("未知填充类型")
-	}
 
 	mode.CryptBlocks(inputBin, inputBin)
 
 	switch paddingType {
 	case PADDING_PKCS5:
-		inputBin = PKCS5UnPadding(inputBin)
+		inputBin, err = PKCS5UnPadding(inputBin)
+		if err != nil {
+			return nil, err
+		}
 	case PADDING_PKCS7:
 		inputBin, err = PKCS7UnPadding(inputBin)
 		if err != nil {
@@ -318,10 +304,29 @@ func PKCS5Padding(ciphertext []byte, blockSize int) []byte {
 	return append(ciphertext, padtext...)
 }
 
-func PKCS5UnPadding(origData []byte) []byte {
+func PKCS5UnPadding(origData []byte) ([]byte, error) {
 	length := len(origData)
+	if length == 0 {
+		return nil, fmt.Errorf("PKCS5 padding: input data is empty")
+	}
+
+	// 获取最后一个字节的值，该值应该是填充的字节数
 	unpadding := int(origData[length-1])
-	return origData[:(length - unpadding)]
+
+	// 检查填充长度是否合法
+	if unpadding > length {
+		return nil, fmt.Errorf("PKCS5 padding: invalid padding length %d", unpadding)
+	}
+
+	// 检查填充的字节是否都是相同的
+	for i := length - 1; i > length-1-unpadding; i-- {
+		if origData[i] != byte(unpadding) {
+			return nil, fmt.Errorf("PKCS5 padding: invalid padding content")
+		}
+	}
+
+	// 移除填充
+	return origData[:(length - unpadding)], nil
 }
 
 func ZeroPadding(ciphertext []byte, targetSize int) []byte {
